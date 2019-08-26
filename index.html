@@ -26,11 +26,9 @@
         const myBtn = document.getElementsByClassName('blogBtn')[0];
         const vrBtn = document.getElementsByClassName('vrBtn')[0];
         myBtn.addEventListener('click',function () {
-            console.log(wx)
-            alert(wx)
             wx.miniProgram.navigateTo({
                 // url: '/packageAR/pagesAR/index',
-                url: '../../packageAR/pagesAR/index',
+                url: 'packageAR/pagesAR/index',
                 success: function(res) {
                     console.log('success',res)
                     alert(JSON.stringify(res) + '234');
