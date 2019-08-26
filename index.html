@@ -5,8 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Norimaki</title>
+    <style>
+        .btn {
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
+            color: #fff;
+            font-size: 14px;
+            background: #1abc9c;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     My Page
+    <div class="btn blogBtn">My Blog</div>
+    <script>
+        const myBtn = document.getElementsByClassName('blogBtn')[0];
+        myBtn.addEventListener('click',function () {
+            wx.miniProgram.navigateTo({
+                url: '/packageAR/pagesAR/index'
+            })
+        })
+    </script>
 </body>
 </html>
