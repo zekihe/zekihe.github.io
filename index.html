@@ -24,7 +24,13 @@
         const myBtn = document.getElementsByClassName('blogBtn')[0];
         myBtn.addEventListener('click',function () {
             wx.miniProgram.navigateTo({
-                url: '/packageAR/pagesAR/index'
+                url: '/packageAR/pagesAR/index',
+                success: function(res) {
+                    console.log('success',res)
+                },
+                fail: function(res) {
+                    console.log('error',res)
+                }
             })
         })
     </script>
