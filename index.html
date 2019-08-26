@@ -20,10 +20,13 @@
 <body>
     My Page
     <div class="btn blogBtn">My Blog</div>
+    <div class="btn vrBtn">My Blog</div>
     <script>
         const myBtn = document.getElementsByClassName('blogBtn')[0];
+        const vrBtn = document.getElementsByClassName('vrBtn')[0];
         myBtn.addEventListener('click',function () {
             console.log(wx)
+            alert(wx)
             wx.miniProgram.navigateTo({
                 url: '/packageAR/pagesAR/index',
                 success: function(res) {
@@ -33,6 +36,9 @@
                     console.log('error',res)
                 }
             })
+        })
+        vrBtn.addEventListener('click',function () {
+            window.location.href = 'https://eqvrar.com/admin/live_wx_apps.php?live_id=live_NTM='
         })
     </script>
 </body>
