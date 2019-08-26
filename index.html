@@ -30,10 +30,10 @@
             alert(wx)
             wx.miniProgram.navigateTo({
                 // url: '/packageAR/pagesAR/index',
-                url: '../base/base',
+                url: '../../pages/answer/answer',
                 success: function(res) {
                     console.log('success',res)
-                    alert(JSON.stringify(res));
+                    alert(JSON.stringify(res) + '234');
                 },
                 fail: function(res) {
                     console.log('error',res)
