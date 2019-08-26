@@ -23,6 +23,7 @@
     <script>
         const myBtn = document.getElementsByClassName('blogBtn')[0];
         myBtn.addEventListener('click',function () {
+            console.log(wx)
             wx.miniProgram.navigateTo({
                 url: '/packageAR/pagesAR/index',
                 success: function(res) {
