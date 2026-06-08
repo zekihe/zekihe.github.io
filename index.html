@@ -1,43 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Norimaki</title>
-    <style>
-        .btn {
-            width: 100px;
-            height: 40px;
-            line-height: 40px;
-            color: #fff;
-            font-size: 14px;
-            background: #1abc9c;
-            text-align: center;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>日语期末复习</title>
+<style>
+:root{
+  --bg:#f6f4ee; --card:#fff; --ink:#23211c; --sub:#8a8a82;
+  --line:#e7e3d8; --accent:#c0392b; --accent2:#2e7d6b;
+  --mask:#e9e5da; --jp:#1b1b1b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"PingFang SC","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  font-size:18px;line-height:1.7;-webkit-text-size-adjust:100%;}
+body{padding-bottom:40px;}
+
+/* 顶栏 */
+header{position:sticky;top:0;z-index:30;background:rgba(246,244,238,.96);
+  backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid var(--line);
+  padding:calc(env(safe-area-inset-top,0) + 8px) 10px 8px;}
+.htitle{font-size:15px;font-weight:700;text-align:center;letter-spacing:.5px;margin-bottom:8px;color:#444;}
+.toggles{display:flex;gap:6px;justify-content:center;margin-bottom:8px;}
+.tg{flex:1;max-width:120px;border:1px solid var(--line);background:var(--card);
+  border-radius:999px;padding:8px 4px;font-size:13px;font-weight:600;color:#555;text-align:center;}
+.tg.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.tg.on.kanatog{background:var(--accent2);border-color:var(--accent2);}
+.search{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;
+  padding:9px 12px;font-size:15px;outline:none;}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 2px 2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:8px;
+  padding:6px 0;font-size:14px;font-weight:600;color:#555;white-space:nowrap;
+  position:relative;min-width:38px;text-align:center;}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.tab.key{background:#fdf6e3;border-color:#e8d28a;}
+.tab.key.on{background:var(--ink);border-color:var(--ink);}
+.tab .star{position:absolute;bottom:1px;right:3px;color:#e2a400;font-size:9px;line-height:1;}
+.tab.done::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;
+  border-radius:50%;background:var(--accent2);}
+.tab.on.done::after{background:#8fe3cf;}
+.reset-tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:999px;
+  padding:8px 12px;font-size:13px;font-weight:600;color:#999;white-space:nowrap;}
+
+main{padding:12px 10px 0;max-width:680px;margin:0 auto;}
+
+.lesson-head{margin:6px 2px 12px;}
+.lesson-head .unit{font-size:12px;color:#999;font-weight:600;}
+.lesson-head .ttl{font-size:23px;font-weight:800;margin-top:2px;line-height:1.35;}
+.lesson-head .sub{font-size:14px;color:#888;margin-top:2px;}
+.keybadge{display:inline-block;background:#e2a400;color:#fff;font-size:11px;font-weight:800;
+  border-radius:6px;padding:2px 8px;margin-bottom:6px;letter-spacing:.5px;
+  box-shadow:0 1px 3px rgba(226,164,0,.35);}
+
+.sec{margin-bottom:18px;}
+.sec-h{font-size:15.5px;font-weight:700;color:var(--accent);letter-spacing:.5px;
+  margin:0 2px 8px;display:flex;align-items:center;gap:6px;}
+.sec-h::before{content:"";width:4px;height:15px;background:var(--accent);border-radius:2px;}
+.sec-h.g::before{background:var(--accent2);}
+.sec-h.g{color:var(--accent2);}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:13px 14px;margin-bottom:9px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.jp{font-size:20px;color:var(--jp);line-height:1.95;}
+.cn{font-size:17px;color:#5a574e;margin-top:6px;}
+
+/* 假名 */
+.kana{color:#2e7d6b;font-size:.82em;font-weight:600;}
+body.hidekana .kana{background:transparent;color:transparent;cursor:pointer;
+  border-bottom:2px solid #cdc4ad;border-radius:0;padding:0 1px;}
+body.hidekana .kana.show{border-bottom:none;color:#236657;font-size:.95em;font-weight:700;}
+
+/* 中文遮罩 */
+.cn .t,.trans .t,.wcn .t{transition:background .15s,border-color .15s;}
+body.hidecn .cn .t,body.hidecn .trans .t,body.hidecn .wcn .t{
+  background:rgba(46,125,107,.05);color:transparent;border-radius:4px;cursor:pointer;
+  border-bottom:1px dashed #b3c5be;box-shadow:none;}
+body.hidecn .cn.show .t,body.hidecn .trans.show .t,body.hidecn .wcn.show .t{
+  background:none;color:inherit;border-bottom-color:transparent;}
+
+/* 应用课文 */
+.dlg{margin:3px 0;font-size:20px;line-height:1.9;}
+.dlg .role{color:#b08;font-weight:700;}
+.trans{font-size:15.5px;color:#5a574e;margin-top:7px;padding-top:7px;border-top:1px dashed var(--line);}
+.alabel{display:inline-block;background:var(--accent2);color:#fff;font-size:12px;font-weight:700;
+  border-radius:6px;padding:1px 8px;margin-bottom:6px;}
+
+/* 生词 */
+.wlist{display:grid;grid-template-columns:1fr;gap:0;}
+.wrow{display:flex;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);}
+.wrow:last-child{border-bottom:none;}
+.wword{font-size:18.5px;font-weight:700;min-width:0;flex:0 0 auto;max-width:42%;}
+.wread{font-size:13.5px;color:var(--accent2);flex:0 0 auto;}
+body.hidekana .wread{background:transparent;color:transparent;border-bottom:1px dashed #cdc4ad;border-radius:0;padding:0 2px;cursor:pointer;}
+body.hidekana .wread.show{background:none;color:var(--accent2);}
+.wcn{margin-left:auto;font-size:15.5px;color:#5a574e;text-align:right;}
+.whit{background:#fff6c8;}
+
+/* 语法 */
+.glist{padding-left:2px;}
+.gitem{background:#fbfbf8;border-left:3px solid var(--accent2);border-radius:0 8px 8px 0;
+  padding:8px 11px;margin-bottom:7px;font-size:16px;line-height:1.7;color:#3a382f;}
+.gitem b,.gitem strong{color:var(--accent2);}
+
+.hint{text-align:center;color:#aaa;font-size:12px;margin:14px 0 4px;}
+mark{background:#fff2a8;color:inherit;padding:0 1px;border-radius:3px;}
+</style>
 </head>
-<body>
-    <div class="btn blogBtn">My Blog</div>
-    <div class="btn vrBtn">My Blog</div>
-    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script>
-    <script>
-        const myBtn = document.getElementsByClassName('blogBtn')[0];
-        const vrBtn = document.getElementsByClassName('vrBtn')[0];
-        myBtn.addEventListener('click',function () {
-            wx.miniProgram.navigateTo({  //to
-                url: '../../packageAR/pagesAR/index',
-                success: function(res) {
-                    console.log('success',res)
-                },
-                fail: function(res) {
-                    console.log('error',res)
-                }
-            })
-        })
-        vrBtn.addEventListener('click',function () {
-            window.location.href = 'https://eqvrar.com/admin/live_wx_apps.php?live_id=live_NTM='
-        })
-    </script>
+<body class="hidecn hidekana">
+
+<header>
+  <div class="htitle">📘 新标日初级上 · 期末复习（1～12课）<br><span style="font-size:11px;font-weight:600;color:#e2a400;">★ 考试重点：第 5～12 课</span></div>
+  <div class="toggles">
+    <div class="tg on" id="tCn">隐藏中文</div>
+    <div class="tg on kanatog" id="tKana">隐藏假名</div>
+    <div class="reset-tab" id="resetBtn">↺ 重置</div>
+  </div>
+  <input class="search" id="search" placeholder="🔍 搜生词（日文/读音/中文）…" autocomplete="off">
+  <div class="tabs" id="tabs"></div>
+</header>
+
+<main id="main"></main>
+<div class="hint" id="hint">点被遮住的部分可单独显示答案 · 再点收起</div>
+
+<script>
+const DATA = {"lessons": [{"no": "第1课", "unit": "第1单元 小李在日", "title": "李さんは中国人です（小李是中国人）", "sub": "小李是中国人", "basic": [{"jp": "李（リー）さんは　中国人（ちゅうごくじん）です。", "cn": "小李是中国人。"}, {"jp": "森（もり）さんは　学生（がくせい）では　ありません。", "cn": "森先生不是学生。"}, {"jp": "林（はやし）さんは　日本人（にほんじん）ですか。", "cn": "林先生是日本人吗？"}, {"jp": "李（リー）さんは　ＪＣ企画（きかく）の　社員（しゃいん）です。", "cn": "小李是JC策划公司的职员。"}], "apply": [{"label": "A", "dialog": ["甲：わたしは　森（もり）です。小野（おの）さんですか。", "乙：はい、そうです。小野です。"], "trans": "我姓森，您是小野女士吗？／是的，我是小野。"}, {"label": "B", "dialog": ["甲：森さんは　学生（がくせい）ですか。", "乙：いいえ、学生では　ありません。会社員（かいしゃいん）です。"], "trans": "森先生是学生吗？／不，不是学生，是公司职员。"}, {"label": "C", "dialog": ["甲：吉田（よしだ）さんですか。", "乙：いいえ、ちがいます。森です。"], "trans": "您是吉田先生吗？／不，不是，我是森。"}, {"label": "D", "dialog": ["甲：李さんは　ＪＣ企画（きかく）の　社員（しゃいん）ですか。", "乙：はい、そうです。"], "trans": "小李是JC策划公司的职员吗？／是的。"}], "words": [{"word": "ＪＣ企画", "read": "ジェーシーきかく", "cn": "JC策划（公司名）"}, {"word": "社員", "read": "しゃいん", "cn": "职员"}, {"word": "わたし", "read": "—", "cn": "我"}, {"word": "はい", "read": "—", "cn": "是"}, {"word": "そうです", "read": "—", "cn": "是的"}, {"word": "いいえ", "read": "—", "cn": "不是"}, {"word": "～さん", "read": "—", "cn": "～先生／女士"}], "grammar": ["**～は～です**：肯定判断「～是～」", "**～は～では ありません**：否定「～不是～」（口语 `じゃ ありません`）", "**～は～ですか**：疑问「～是～吗？」", "**の**：领属／所属「～的」（ＪＣ企画の社員）"]}, {"no": "第2课", "unit": "第1单元 小李在日", "title": "これは本です（这是书）", "sub": "这是书", "basic": [{"jp": "これは　本（ほん）です。", "cn": "这是书。"}, {"jp": "それは　何（なん）ですか。", "cn": "那是什么？"}, {"jp": "あれは　だれの　傘（かさ）ですか。", "cn": "那是谁的伞？"}, {"jp": "この　カメラは　スミスさんのです。", "cn": "这个相机是史密斯先生的。"}], "apply": [{"label": "A", "dialog": ["甲：これは　テレビですか。", "乙：いいえ、それは　テレビでは　ありません。パソコンです。"], "trans": "这是电视机吗？／不，那不是电视机，是个人电脑。"}, {"label": "B", "dialog": ["甲：これは　何（なん）ですか。", "乙：これは　日本語（にほんご）の　本（ほん）です。"], "trans": "这是什么？／这是日语书。"}, {"label": "C", "dialog": ["甲：森（もり）さんの　かばんは　どれですか。", "乙：あの　かばんです。"], "trans": "森先生的包是哪个？／是那个包。"}, {"label": "D", "dialog": ["甲：その　ノートは　だれのですか。", "乙：わたしのです。"], "trans": "那个笔记本是谁的？／是我的。"}], "words": [{"word": "これ／この", "read": "—", "cn": "这（个）"}, {"word": "それ／その", "read": "—", "cn": "那（个，近）"}, {"word": "あれ／あの", "read": "—", "cn": "那（个，远）"}, {"word": "本", "read": "ほん", "cn": "书"}, {"word": "何", "read": "なに／なん", "cn": "什么"}, {"word": "だれ", "read": "—", "cn": "谁"}, {"word": "カメラ", "read": "—", "cn": "相机"}, {"word": "テレビ", "read": "—", "cn": "电视机"}, {"word": "パソコン", "read": "—", "cn": "个人电脑"}, {"word": "かばん", "read": "—", "cn": "包"}, {"word": "どれ", "read": "—", "cn": "哪个"}, {"word": "ノート", "read": "—", "cn": "笔记本"}], "grammar": ["**これ／それ／あれ**：事物指示代词（这/那近/那远）", "**この／その／あの＋名词**：连体指示「这个～」", "**～の～**：名词修饰名词「～的～」", "**～の（です）**：省略后续名词「～的（东西）」（スミスさんの＝史密斯的东西）", "**疑问词 何（なに/なん）／だれ／どれ**"]}, {"no": "第3课", "unit": "第1单元 小李在日", "title": "ここはデパートです（这里是百货商店）", "sub": "这里是百货商店", "basic": [{"jp": "ここは　デパートです。", "cn": "这里是百货商店。"}, {"jp": "食堂（しょくどう）は　デパートの　７階（かい）です。", "cn": "食堂在百货商店的7楼。"}, {"jp": "あそこも　ＪＣ企画（きかく）の　ビルですか。", "cn": "那里也是JC策划公司的大楼吗？"}, {"jp": "かばん売り場（うりば）は　１階（かい）ですか、２階（かい）ですか。", "cn": "卖包的柜台是在1楼还是2楼？"}], "apply": [{"label": "A", "dialog": ["甲：トイレは　どこですか。", "乙：あちらです。"], "trans": "洗手间在哪里？／在那边。"}, {"label": "B", "dialog": ["甲：ここは　郵便局（ゆうびんきょく）ですか、銀行（ぎんこう）ですか。", "乙：銀行です。"], "trans": "这里是邮局还是银行？／是银行。"}, {"label": "C", "dialog": ["甲：これは　いくらですか。", "乙：それは　5,800円（えん）です。"], "trans": "这个多少钱？／那个5800日元。"}, {"label": "D", "dialog": ["甲：あれは？", "乙：あれも　5,800円（えん）です。"], "trans": "那个呢？／那个也是5800日元。"}], "words": [{"word": "ここ", "read": "—", "cn": "这里"}, {"word": "そこ", "read": "—", "cn": "那里（近）"}, {"word": "あそこ", "read": "—", "cn": "那里（远）"}, {"word": "どこ", "read": "—", "cn": "哪里"}, {"word": "デパート", "read": "—", "cn": "百货商店"}, {"word": "食堂", "read": "しょくどう", "cn": "食堂"}, {"word": "ビル", "read": "—", "cn": "大楼"}, {"word": "売り場", "read": "うりば", "cn": "柜台、卖场"}, {"word": "トイレ", "read": "—", "cn": "洗手间"}, {"word": "郵便局", "read": "ゆうびんきょく", "cn": "邮局"}, {"word": "銀行", "read": "ぎんこう", "cn": "银行"}, {"word": "～階", "read": "～かい", "cn": "～楼、～层"}, {"word": "～円", "read": "～えん", "cn": "～日元"}, {"word": "いくら", "read": "—", "cn": "多少钱"}, {"word": "あちら", "read": "—", "cn": "那边"}], "grammar": ["**ここ／そこ／あそこ／どこ**：场所指示代词", "**こちら／そちら／あちら／どちら**：方向指示（也更礼貌）", "**～も**：「也」（あそこも＝那里也）", "**A ですか、B ですか**：选择疑问「是A还是B？」", "**いくらですか**：问价格"]}, {"no": "第4课", "unit": "第1单元 小李在日", "title": "部屋に机といすがあります（房间里有桌子和椅子）", "sub": "房间里有桌子和椅子", "basic": [{"jp": "部屋（へや）に　机（つくえ）と　いすが　あります。", "cn": "房间里有桌子和椅子。"}, {"jp": "机（つくえ）の　上（うえ）に　猫（ねこ）が　います。", "cn": "桌子上有猫。"}, {"jp": "売店（ばいてん）は　駅（えき）の　外（そと）に　あります。", "cn": "小卖部在车站外面。"}, {"jp": "吉田（よしだ）さんは　庭（にわ）に　います。", "cn": "吉田先生在院子里。"}], "apply": [{"label": "A", "dialog": ["甲：その　箱（はこ）の　中（なか）に　何（なに）が　ありますか。", "乙：時計（とけい）と　眼鏡（めがね）が　あります。"], "trans": "那个箱子里有什么？／有钟表和眼镜。"}, {"label": "B", "dialog": ["甲：部屋（へや）に　だれが　いますか。", "乙：だれも　いません。"], "trans": "房间里有谁？／谁也没有。"}, {"label": "C", "dialog": ["甲：小野（おの）さんの　家（いえ）は　どこに　ありますか。", "乙：横浜（よこはま）に　あります。"], "trans": "小野女士的家在哪里？／在横滨。"}, {"label": "D", "dialog": ["甲：あそこに　犬（いぬ）が　いますか。", "乙：ええ、わたしの　犬（いぬ）です。"], "trans": "那里有狗吗？／嗯，是我的狗。"}], "words": [{"word": "部屋", "read": "へや", "cn": "房间"}, {"word": "机", "read": "つくえ", "cn": "桌子"}, {"word": "いす", "read": "—", "cn": "椅子"}, {"word": "上", "read": "うえ", "cn": "上面"}, {"word": "中", "read": "なか", "cn": "里面"}, {"word": "外", "read": "そと", "cn": "外面"}, {"word": "猫", "read": "ねこ", "cn": "猫"}, {"word": "犬", "read": "いぬ", "cn": "狗"}, {"word": "売店", "read": "ばいてん", "cn": "小卖部"}, {"word": "駅", "read": "えき", "cn": "车站"}, {"word": "庭", "read": "にわ", "cn": "院子"}, {"word": "箱", "read": "はこ", "cn": "箱子"}, {"word": "時計", "read": "とけい", "cn": "钟表"}, {"word": "眼鏡", "read": "めがね", "cn": "眼镜"}, {"word": "家", "read": "いえ", "cn": "家"}, {"word": "あります", "read": "—", "cn": "有（非生命）"}, {"word": "います", "read": "—", "cn": "有（生命）"}], "grammar": ["**场所に　物が　あります**：表非生命存在「（某处）有（某物）」", "**场所に　人/动物が　います**：表生命存在「（某处）有（某人/动物）」", "**～と～**：并列「～和～」", "**位置词**：上（うえ）/中（なか）/外（そと）/下（した）+ に", "**だれも　いません／何も　ありません**：全否定「谁也没有／什么也没有」"]}, {"no": "第5课", "unit": "第2单元 小李的公司生活①", "title": "森さんは7時に起きます（森先生7点起床）", "sub": "森先生7点起床", "basic": [{"jp": "今（いま）　４時（じ）です。", "cn": "现在4点。"}, {"jp": "森（もり）さんは　７時（じ）に　起（お）きます。", "cn": "森先生7点起床。"}, {"jp": "森（もり）さんは　先週（せんしゅう）　休（やす）みました。", "cn": "森先生上周休息了。"}, {"jp": "わたしは　昨日（きのう）　働（はたら）きませんでした。", "cn": "我昨天没工作。"}], "apply": [{"label": "A", "dialog": ["甲：毎日（まいにち）、何時（なんじ）に　寝（ね）ますか。", "乙：11時（じ）30分（ぷん）に　寝（ね）ます。"], "trans": "每天几点睡觉？／11点30分睡。"}, {"label": "B", "dialog": ["甲：昨日（きのう）、何時（なんじ）から　何時（なんじ）まで　働（はたら）きましたか。", "乙：9時（じ）から　6時（じ）まで　働（はたら）きました。"], "trans": "昨天从几点工作到几点？／从9点工作到6点。"}, {"label": "C", "dialog": ["甲：先週（せんしゅう）、休（やす）みましたか。", "乙：いいえ、休（やす）みませんでした。"], "trans": "上周休息了吗？／不，没休息。"}, {"label": "D", "dialog": ["甲：試験（しけん）は　いつ　始（はじ）まりますか。", "乙：来週（らいしゅう）の　木曜日（もくようび）です。"], "trans": "考试什么时候开始？／下周四。"}], "words": [{"word": "今", "read": "いま", "cn": "现在"}, {"word": "～時", "read": "～じ", "cn": "～点"}, {"word": "～分", "read": "～ふん／ぷん", "cn": "～分"}, {"word": "起きます", "read": "おきます", "cn": "起床（上一段）"}, {"word": "寝ます", "read": "ねます", "cn": "睡觉（下一段）"}, {"word": "休みます", "read": "やすみます", "cn": "休息"}, {"word": "働きます", "read": "はたらきます", "cn": "工作（五段）"}, {"word": "始まります", "read": "はじまります", "cn": "开始（五段）"}, {"word": "先週", "read": "せんしゅう", "cn": "上周"}, {"word": "来週", "read": "らいしゅう", "cn": "下周"}, {"word": "昨日", "read": "きのう", "cn": "昨天"}, {"word": "毎日", "read": "まいにち", "cn": "每天"}, {"word": "試験", "read": "しけん", "cn": "考试"}, {"word": "木曜日", "read": "もくようび", "cn": "星期四"}, {"word": "いつ", "read": "—", "cn": "什么时候"}], "grammar": ["**时间点に　动词ます**：「在（某时刻）做～」（7時に起きます）", "**动词ます形**：现肯 ～ます／现否 ～ません／过肯 ～ました／过否 ～ませんでした", "**～から～まで**：「从～到～」（时间/场所）", "**疑问词 何時（なんじ）／いつ**"]}, {"no": "第6课", "unit": "第2单元 小李的公司生活①", "title": "吉田さんは来月中国へ行きます（吉田先生下个月去中国）", "sub": "吉田先生下个月去中国", "basic": [{"jp": "吉田（よしだ）さんは　来月（らいげつ）　中国（ちゅうごく）へ　行（い）きます。", "cn": "吉田先生下个月去中国。"}, {"jp": "李（リー）さんは　先月（せんげつ）　北京（ペキン）から　来（き）ました。", "cn": "小李上个月从北京来。"}, {"jp": "小野（おの）さんは　友達（ともだち）と　帰（かえ）りました。", "cn": "小野女士和朋友一起回去了。"}, {"jp": "森（もり）さんは　東京（とうきょう）まで　新幹線（しんかんせん）で　行（い）きます。", "cn": "森先生坐新干线去东京。"}], "apply": [{"label": "A", "dialog": ["甲：いつ　アメリカへ　行（い）きますか。", "乙：10月（がつ）に　行（い）きます。"], "trans": "什么时候去美国？／10月去。"}, {"label": "B", "dialog": ["甲：駅（えき）まで　何（なに）で　行（い）きますか。", "乙：自転車（じてんしゃ）で　行（い）きます。"], "trans": "去车站坐什么去？／骑自行车去。"}, {"label": "C", "dialog": ["甲：だれと　美術館（びじゅつかん）へ　行（い）きますか。", "乙：友達（ともだち）と　行（い）きます。"], "trans": "和谁去美术馆？／和朋友去。"}, {"label": "D", "dialog": ["甲：大阪（おおさか）から　上海（シャンハイ）まで　飛行機（ひこうき）で　行（い）きますか。", "乙：いいえ、フェリーで　行（い）きます。"], "trans": "从大阪到上海坐飞机去吗？／不，坐轮渡去。"}], "words": [{"word": "来月", "read": "らいげつ", "cn": "下个月"}, {"word": "先月", "read": "せんげつ", "cn": "上个月"}, {"word": "～月", "read": "～がつ", "cn": "～月"}, {"word": "行きます", "read": "いきます", "cn": "去"}, {"word": "来ます", "read": "きます", "cn": "来"}, {"word": "帰ります", "read": "かえります", "cn": "回去、回来"}, {"word": "友達", "read": "ともだち", "cn": "朋友"}, {"word": "新幹線", "read": "しんかんせん", "cn": "新干线"}, {"word": "自転車", "read": "じてんしゃ", "cn": "自行车"}, {"word": "飛行機", "read": "ひこうき", "cn": "飞机"}, {"word": "フェリー", "read": "—", "cn": "轮渡"}, {"word": "美術館", "read": "びじゅつかん", "cn": "美术馆"}], "grammar": ["**场所へ　行きます／来ます／帰ります**：移动方向「往～去/来/回」（へ 读 e）", "**交通工具で**：表方式「乘～」（新幹線で）", "**人と**：「和（某人）一起」（友達と）", "**～から～まで**：起点～终点（北京から、東京まで）", "**疑问词 何で（怎么去）／だれと（和谁）**"]}, {"no": "第7课", "unit": "第2单元 小李的公司生活①", "title": "李さんは毎日コーヒーを飲みます（小李每天喝咖啡）", "sub": "小李每天喝咖啡", "basic": [{"jp": "李（リー）さんは　毎日（まいにち）　コーヒーを　飲（の）みます。", "cn": "小李每天喝咖啡。"}, {"jp": "李（リー）さんは　図書館（としょかん）で　勉強（べんきょう）します。", "cn": "小李在图书馆学习。"}, {"jp": "わたしは　毎朝（まいあさ）　パンか　ご飯（はん）を　食（た）べます。", "cn": "我每天早上吃面包或米饭。"}, {"jp": "コーラと　ケーキを　ください。", "cn": "请给我可乐和蛋糕。"}], "apply": [{"label": "A", "dialog": ["甲：李（リー）さん、今朝（けさ）　うちで　新聞（しんぶん）を　読（よ）みましたか。", "乙：いいえ、読（よ）みませんでした。"], "trans": "小李，今天早上在家看报纸了吗？／不，没看。"}, {"label": "B", "dialog": ["甲：今朝（けさ）　何（なに）を　食（た）べましたか。", "乙：何（なに）も　食（た）べませんでした。"], "trans": "今天早上吃什么了？／什么也没吃。"}, {"label": "C", "dialog": ["甲：吉田（よしだ）さん、日曜日（にちようび）　何（なに）を　しますか。", "乙：テニスか　ジョギングを　します。"], "trans": "吉田先生，星期天做什么？／打网球或者慢跑。"}, {"label": "D", "dialog": ["甲：いらっしゃいませ。", "乙：この　ノートと　鉛筆（えんぴつ）を　ください。"], "trans": "欢迎光临。／请给我这个笔记本和铅笔。"}], "words": [{"word": "コーヒー", "read": "—", "cn": "咖啡"}, {"word": "パン", "read": "—", "cn": "面包"}, {"word": "ご飯", "read": "ごはん", "cn": "米饭"}, {"word": "コーラ", "read": "—", "cn": "可乐"}, {"word": "ケーキ", "read": "—", "cn": "蛋糕"}, {"word": "飲みます", "read": "のみます", "cn": "喝"}, {"word": "食べます", "read": "たべます", "cn": "吃"}, {"word": "読みます", "read": "よみます", "cn": "读、看"}, {"word": "勉強します", "read": "べんきょうします", "cn": "学习"}, {"word": "します", "read": "—", "cn": "做"}, {"word": "図書館", "read": "としょかん", "cn": "图书馆"}, {"word": "毎朝", "read": "まいあさ", "cn": "每天早上"}, {"word": "今朝", "read": "けさ", "cn": "今天早上"}, {"word": "新聞", "read": "しんぶん", "cn": "报纸"}, {"word": "テニス", "read": "—", "cn": "网球"}, {"word": "ジョギング", "read": "—", "cn": "慢跑"}, {"word": "鉛筆", "read": "えんぴつ", "cn": "铅笔"}, {"word": "いらっしゃいませ", "read": "—", "cn": "欢迎光临"}], "grammar": ["**～を　动词**：他动词宾语助词「を」（コーヒーを飲みます）", "**场所で　动词**：动作发生地点「在～」（図書館で勉強します）", "**AかB**：名词并列选择「A或B」（パンかご飯）", "**～を　ください**：「请给我～」", "**何も＋否定**：「什么也不～」"]}, {"no": "第8课", "unit": "第2单元 小李的公司生活①", "title": "李さんは日本語で手紙を書きます（小李用日语写信）", "sub": "小李用日语写信", "basic": [{"jp": "李（リー）さんは　日本語（にほんご）で　手紙（てがみ）を　書（か）きます。", "cn": "小李用日语写信。"}, {"jp": "わたしは　小野（おの）さんに　お土産（みやげ）を　あげます。", "cn": "我送给小野女士礼物。"}, {"jp": "わたしは　森（もり）さんに　辞書（じしょ）を　もらいました。", "cn": "我从森先生那里得到了词典。"}, {"jp": "李（リー）さんは　明日（あした）　長島（ながしま）さんに　会（あ）います。", "cn": "小李明天和长岛先生见面。"}], "apply": [{"label": "A", "dialog": ["甲：昨日（きのう）、母（はは）に　誕生日（たんじょうび）の　プレゼントを　送（おく）りました。", "甲：何（なに）で　送（おく）りましたか。", "甲：航空便（こうくうびん）で　送（おく）りました。"], "trans": "昨天给母亲寄了生日礼物。／用什么寄的？／用航空邮件寄的。"}, {"label": "B", "dialog": ["甲：その　映画（えいが）の　チケットを　だれに　あげますか。", "乙：李（リー）さんに　あげます。"], "trans": "那个电影票送给谁？／送给小李。"}, {"label": "C", "dialog": ["甲：その　パンフレットを　もらいましたか。", "乙：長島（ながしま）さんに　もらいました。"], "trans": "得到那个宣传册了吗？／从长岛先生那里得到的。"}, {"label": "D", "dialog": ["甲：すみません、李（リー）さんは　いますか。", "乙：もう　帰（かえ）りました。"], "trans": "对不起，小李在吗？／已经回去了。"}], "words": [{"word": "手紙", "read": "てがみ", "cn": "信"}, {"word": "お土産", "read": "おみやげ", "cn": "礼物、土特产"}, {"word": "辞書", "read": "じしょ", "cn": "词典"}, {"word": "プレゼント", "read": "—", "cn": "礼物"}, {"word": "チケット", "read": "—", "cn": "票"}, {"word": "パンフレット", "read": "—", "cn": "宣传册"}, {"word": "誕生日", "read": "たんじょうび", "cn": "生日"}, {"word": "航空便", "read": "こうくうびん", "cn": "航空邮件"}, {"word": "映画", "read": "えいが", "cn": "电影"}, {"word": "母", "read": "はは", "cn": "（我）母亲"}, {"word": "書きます", "read": "かきます", "cn": "写"}, {"word": "あげます", "read": "—", "cn": "给（给别人）"}, {"word": "もらいます", "read": "—", "cn": "得到、收到"}, {"word": "会います", "read": "あいます", "cn": "见面"}, {"word": "送ります", "read": "おくります", "cn": "寄、送"}, {"word": "もう", "read": "—", "cn": "已经"}], "grammar": ["**工具/语言で**：表手段「用～」（日本語で、航空便で）", "**人に　あげます**：「给（某人）～」（授予方向：我→别人）", "**人に　もらいます**：「从（某人）得到～」（接受方向：别人→我）", "**人に　会います**：「和（某人）见面」（注意用 に，不用 と）"]}, {"no": "第9课", "unit": "第3单元 小李在箱根", "title": "四川料理は辛いです（四川菜很辣）", "sub": "四川菜很辣", "basic": [{"jp": "四川料理（しせんりょうり）は　辛（から）いです。", "cn": "四川菜很辣。"}, {"jp": "この　スープは　あまり　熱（あつ）くないです。", "cn": "这个汤不太热。"}, {"jp": "旅行（りょこう）は　楽（たの）しかったです。", "cn": "旅行很愉快。"}, {"jp": "中国（ちゅうごく）は　広（ひろ）い　国（くに）です。", "cn": "中国是个辽阔的国家。"}], "apply": [{"label": "A", "dialog": ["甲：天気（てんき）は　よかったですか。", "乙：いいえ、あまり　よく　なかったです。"], "trans": "天气好吗？／不，不太好。"}, {"label": "B", "dialog": ["甲：美容院（びよういん）へ　行（い）きましたか。", "乙：いいえ、とても　込（こ）んで　いましたね。"], "trans": "去美容院了吗？／没有，（那里）很拥挤呢。"}, {"label": "C", "dialog": ["甲：万里（ばんり）の　長城（ちょうじょう）は　北京（ペキン）から　遠（とお）いですか。", "乙：いいえ、あまり　遠（とお）く　ないです。"], "trans": "长城离北京远吗？／不，不太远。"}, {"label": "D", "dialog": ["甲：北京（ペキン）ダックは　食（た）べましたか。", "乙：はい、食（た）べました。とても　おいしかったです。"], "trans": "吃北京烤鸭了吗？／是的，吃了，非常好吃。"}], "words": [{"word": "四川料理", "read": "しせんりょうり", "cn": "四川菜"}, {"word": "スープ", "read": "—", "cn": "汤"}, {"word": "旅行", "read": "りょこう", "cn": "旅行"}, {"word": "国", "read": "くに", "cn": "国家"}, {"word": "天気", "read": "てんき", "cn": "天气"}, {"word": "美容院", "read": "びよういん", "cn": "美容院"}, {"word": "万里の長城", "read": "ばんりのちょうじょう", "cn": "万里长城"}, {"word": "北京ダック", "read": "ペキンダック", "cn": "北京烤鸭"}, {"word": "辛い", "read": "からい", "cn": "辣的"}, {"word": "熱い", "read": "あつい", "cn": "热的"}, {"word": "楽しい", "read": "たのしい", "cn": "快乐的"}, {"word": "広い", "read": "ひろい", "cn": "宽广的"}, {"word": "遠い", "read": "とおい", "cn": "远的"}, {"word": "いい／よい", "read": "—", "cn": "好的"}, {"word": "おいしい", "read": "—", "cn": "好吃的"}, {"word": "あまり", "read": "—", "cn": "（不）太～"}, {"word": "とても", "read": "—", "cn": "非常"}], "grammar": ["**～いです**：现在肯定「（很）～」（辛いです）", "**～くないです**：现在否定「不～」（熱く ないです）", "**～かったです**：过去肯定「（曾）～」（楽しかったです）", "**～くなかったです**：过去否定「（曾）不～」（よくなかったです）", "特殊：いい → よい → よくない／よかった", "**い形容词＋名词**：直接修饰（広い国）", "**あまり＋否定**：「不太～」"]}, {"no": "第10课", "unit": "第3单元 小李在箱根", "title": "京都の紅葉は有名です（京都的红叶很有名）", "sub": "京都的红叶很有名", "basic": [{"jp": "京都（きょうと）の　紅葉（こうよう）は　有名（ゆうめい）です。", "cn": "京都的红叶很有名。"}, {"jp": "この　通（とお）りは　にぎやかでは　ありません。", "cn": "这条街道不热闹。"}, {"jp": "奈良（なら）は　静（しず）かな　町（まち）です。", "cn": "奈良是个安静的城市。"}, {"jp": "昨日（きのう）は　日曜日（にちようび）でした。", "cn": "昨天是星期天。"}], "apply": [{"label": "A", "dialog": ["甲：どんな　お土産（みやげ）を　買（か）いましたか。", "乙：きれいな　人形（にんぎょう）を　買（か）いました。"], "trans": "买了什么样的礼物？／买了漂亮的人偶。"}, {"label": "B", "dialog": ["甲：京都（きょうと）は　どうでしたか。", "乙：とても　きれいでした。でも、静（しず）かでは　ありませんでした。"], "trans": "京都怎么样？／非常漂亮。不过，并不安静。"}, {"label": "C", "dialog": ["甲：横浜（よこはま）は　どんな　町（まち）ですか。", "乙：大（おお）きい　町（まち）です。そして、にぎやかな　町（まち）です。"], "trans": "横滨是个什么样的城市？／是个大城市。而且，是个热闹的城市。"}, {"label": "D", "dialog": ["甲：東京（とうきょう）の　天気（てんき）は　どうでしたか。", "乙：昨日（きのう）は　晴（は）れでした。でも、おとといは　雨（あめ）でした。"], "trans": "东京的天气怎么样？／昨天是晴天。不过，前天是雨天。"}], "words": [{"word": "紅葉", "read": "こうよう", "cn": "红叶"}, {"word": "通り", "read": "とおり", "cn": "街道、马路"}, {"word": "町", "read": "まち", "cn": "城市、街道"}, {"word": "人形", "read": "にんぎょう", "cn": "人偶、玩偶"}, {"word": "晴れ", "read": "はれ", "cn": "晴天"}, {"word": "雨", "read": "あめ", "cn": "雨"}, {"word": "おととい", "read": "—", "cn": "前天"}, {"word": "有名（な）", "read": "ゆうめい", "cn": "有名的"}, {"word": "にぎやか（な）", "read": "—", "cn": "热闹的"}, {"word": "静か（な）", "read": "しずか", "cn": "安静的"}, {"word": "きれい（な）", "read": "—", "cn": "漂亮的、干净的"}, {"word": "大きい", "read": "おおきい", "cn": "大的"}, {"word": "どんな", "read": "—", "cn": "什么样的"}, {"word": "どう", "read": "—", "cn": "怎么样"}, {"word": "そして", "read": "—", "cn": "而且、然后"}, {"word": "でも", "read": "—", "cn": "但是"}], "grammar": ["**～です**：现在肯定「（很）～」（有名です）", "**～では ありません**：现在否定「不～」（にぎやかでは ありません）", "**～でした**：过去肯定（晴れでした／きれいでした）", "**～では ありませんでした**：过去否定（静かでは ありませんでした）", "**な形容词＋な＋名词**：修饰名词需加 な（静かな町、きれいな人形）", "**どんな＋名词**：「什么样的～」", "**名词谓语**也同此变化（日曜日でした＝（曾）是星期天）"]}, {"no": "第11课", "unit": "第3单元 小李在箱根", "title": "小野さんは歌が好きです（小野女士喜欢唱歌）", "sub": "小野女士喜欢唱歌", "basic": [{"jp": "小野（おの）さんは　歌（うた）が　好（す）きです。", "cn": "小野女士喜欢唱歌。"}, {"jp": "スミスさんは　韓国語（かんこくご）が　分（わ）かります。", "cn": "史密斯先生懂韩语。"}, {"jp": "吉田（よしだ）さんは　中国（ちゅうごく）へ　来（き）たいです。", "cn": "吉田先生想来中国。"}, {"jp": "森（もり）さんは　お酒（さけ）が　好（す）きですから、毎日（まいにち）　飲（の）みます。", "cn": "森先生喜欢喝酒，所以每天都喝。"}], "apply": [{"label": "A", "dialog": ["甲：吉田（よしだ）さんは　料理（りょうり）が　できますか。", "乙：いいえ、全然（ぜんぜん）　できません。"], "trans": "吉田先生会做菜吗？／不，完全不会。"}, {"label": "B", "dialog": ["甲：どんな　音楽（おんがく）が　好（す）きですか。", "乙：ロックや　ポップスが　好（す）きです。"], "trans": "喜欢什么样的音乐？／喜欢摇滚和流行音乐。"}, {"label": "C", "dialog": ["甲：李（リー）さん、スペイン語（ご）が　分（わ）かりますか。", "乙：ええ、大学（だいがく）で　習（なら）いましたから、少（すこ）し　分（わ）かります。"], "trans": "小李，懂西班牙语吗？／嗯，在大学学过，所以懂一点。"}, {"label": "D", "dialog": ["甲：小野（おの）さん、よく　音楽（おんがく）を　聞（き）きますか。", "乙：ええ、家（うち）で　ＣＤを　よく　聞（き）きます。そして、時々（ときどき）　コンサートへ　行（い）きます。"], "trans": "小野女士，经常听音乐吗？／嗯，常在家听CD。而且，偶尔去音乐会。"}], "words": [{"word": "歌", "read": "うた", "cn": "歌"}, {"word": "お酒", "read": "おさけ", "cn": "酒"}, {"word": "韓国語", "read": "かんこくご", "cn": "韩语"}, {"word": "スペイン語", "read": "スペインご", "cn": "西班牙语"}, {"word": "料理", "read": "りょうり", "cn": "菜、烹饪"}, {"word": "音楽", "read": "おんがく", "cn": "音乐"}, {"word": "ロック", "read": "—", "cn": "摇滚乐"}, {"word": "ポップス", "read": "—", "cn": "流行音乐"}, {"word": "コンサート", "read": "—", "cn": "音乐会"}, {"word": "好き（な）", "read": "すき", "cn": "喜欢"}, {"word": "分かります", "read": "わかります", "cn": "懂、明白"}, {"word": "できます", "read": "—", "cn": "会、能"}, {"word": "習います", "read": "ならいます", "cn": "学习"}, {"word": "聞きます", "read": "ききます", "cn": "听、问"}, {"word": "全然", "read": "ぜんぜん", "cn": "完全（+否定）"}, {"word": "少し", "read": "すこし", "cn": "一点"}, {"word": "よく", "read": "—", "cn": "经常"}, {"word": "時々", "read": "ときどき", "cn": "偶尔"}, {"word": "～から", "read": "—", "cn": "因为～（接续助词）"}], "grammar": ["**～が　好き／嫌い／上手／下手**：好恶能力用 が（歌が好きです）", "**～が　分かります／できます**：「懂～／会～」对象用 が", "**动词ます形去ます＋たいです**：愿望「想做～」（来たいです、たい对象可用 が/を）", "**～から**：原因理由「因为～，所以～」（好きですから）", "**AやB**：列举「A啊B啊（之类）」（ロックやポップス）"]}, {"no": "第12课", "unit": "第3单元 小李在箱根", "title": "李さんは森さんより若いです（小李比森先生年轻）", "sub": "小李比森先生年轻", "basic": [{"jp": "李（リー）さんは　森（もり）さんより　若（わか）いです。", "cn": "小李比森先生年轻。"}, {"jp": "日本（にほん）より　中国（ちゅうごく）の　ほうが　広（ひろ）いです。", "cn": "中国比日本辽阔。"}, {"jp": "神戸（こうべ）は　奈良（なら）より　にぎやかでは　ありません。", "cn": "神户没有奈良热闹。"}, {"jp": "スポーツの　中（なか）で　サッカーが　いちばん　おもしろいです。", "cn": "在体育运动中足球最有趣。"}], "apply": [{"label": "A", "dialog": ["甲：北京（ペキン）は　東京（とうきょう）より　寒（さむ）いですか。", "乙：ええ、冬（ふゆ）の　北京（ペキン）は　東京（とうきょう）より　ずっと　寒（さむ）いです。"], "trans": "北京比东京冷吗？／嗯，冬天的北京比东京冷得多。"}, {"label": "B", "dialog": ["甲：日本語（にほんご）と　英語（えいご）と　どちらが　難（むずか）しいですか。", "乙：日本語（にほんご）の　ほうが　難（むずか）しいです。"], "trans": "日语和英语哪个难？／日语更难。"}, {"label": "C", "dialog": ["甲：森（もり）さんは　テニスが　上手（じょうず）ですね。", "乙：いいえ、長島（ながしま）さんほど　上手（じょうず）では　ありません。"], "trans": "森先生网球打得真好啊。／不，没有长岛先生打得好。"}, {"label": "D", "dialog": ["甲：季節（きせつ）の　中（なか）で　いつが　いちばん　好（す）きですか。", "乙：わたしは　春（はる）が　いちばん　好（す）きです。"], "trans": "四季当中最喜欢什么时候？／我最喜欢春天。"}], "words": [{"word": "サッカー", "read": "—", "cn": "足球"}, {"word": "スポーツ", "read": "—", "cn": "体育运动"}, {"word": "季節", "read": "きせつ", "cn": "季节"}, {"word": "冬", "read": "ふゆ", "cn": "冬天"}, {"word": "春", "read": "はる", "cn": "春天"}, {"word": "英語", "read": "えいご", "cn": "英语"}, {"word": "テニス", "read": "—", "cn": "网球"}, {"word": "若い", "read": "わかい", "cn": "年轻的"}, {"word": "寒い", "read": "さむい", "cn": "寒冷的"}, {"word": "難しい", "read": "むずかしい", "cn": "难的"}, {"word": "おもしろい", "read": "—", "cn": "有趣的"}, {"word": "上手（な）", "read": "じょうず", "cn": "（某方面）擅长"}, {"word": "いちばん", "read": "—", "cn": "最"}, {"word": "ずっと", "read": "—", "cn": "～得多"}, {"word": "どちら", "read": "—", "cn": "哪个（两者间）"}], "grammar": ["**AはBより～**：「A比B更～」（李さんは森さんより若い）", "**BよりAのほうが～**：「比起B，A更～」（中国のほうが広い）", "**AはBほど～ない**：「A没有B那么～」（長島さんほど上手ではない）", "**AとBと　どちらが～**：「A和B哪个更～」", "**～の中で　～が　いちばん～**：「在～当中，～最～」（最高级）"]}]};
+const STAR = {7:1,8:1,9:1,10:1,11:1,12:1,5:1,6:1}; // 第2、3单元重点
+let cur = 0;
+let DONE = new Set();
+try{ DONE = new Set(JSON.parse(localStorage.getItem('jp_done')||'[]')); }catch(e){}
+
+// 把 日文（かな） 切成片段，括号读音包成 .kana
+function renderJP(s){
+  let out='', i=0;
+  while(i<s.length){
+    const o=s.indexOf('（',i);
+    if(o<0){out+=esc(s.slice(i));break;}
+    out+=esc(s.slice(i,o));
+    const c=s.indexOf('）',o);
+    if(c<0){out+=esc(s.slice(o));break;}
+    out+='<span class="kana">'+esc(s.slice(o,c+1))+'</span>';
+    i=c+1;
+  }
+  return out;
+}
+function esc(t){return t.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function cnSpan(t,cls){return '<span class="'+cls+'"><span class="t">'+esc(t)+'</span></span>';}
+
+function renderLesson(idx){
+  const L=DATA.lessons[idx];
+  let h='';
+  h+='<div class="lesson-head"><div class="unit">'+esc(L.unit)+'</div>'+
+     (STAR[idx+1]?'<div class="keybadge">★ 考试重点</div>':'')+
+     '<div class="ttl">'+esc(L.no)+'　'+renderJP(L.title.split('（')[0])+'</div>'+
+     '<div class="sub">'+esc(L.sub)+'</div></div>';
+
+  // 基本课文
+  h+='<div class="sec"><div class="sec-h">基本课文</div>';
+  L.basic.forEach(b=>{
+    h+='<div class="card"><div class="jp">'+renderJP(b.jp)+'</div>'+
+       '<div class="cn">'+cnSpanInner(b.cn)+'</div></div>';
+  });
+  h+='</div>';
+
+  // 应用课文
+  h+='<div class="sec"><div class="sec-h">应用课文</div>';
+  L.apply.forEach(a=>{
+    h+='<div class="card"><span class="alabel">'+esc(a.label)+'</span>';
+    a.dialog.forEach(d=>{
+      const m=d.match(/^([甲乙])：(.*)$/);
+      if(m) h+='<div class="dlg"><span class="role">'+m[1]+'：</span>'+renderJP(m[2])+'</div>';
+      else h+='<div class="dlg">'+renderJP(d)+'</div>';
+    });
+    h+='<div class="trans"><span class="t">'+esc(a.trans)+'</span></div></div>';
+  });
+  h+='</div>';
+
+  // 生词
+  h+='<div class="sec"><div class="sec-h">生词</div><div class="card"><div class="wlist">';
+  L.words.forEach(w=>{
+    const read = (w.read==='—'||w.read==='')?'<span class="wread" style="opacity:.25">—</span>'
+                 :'<span class="wread">'+esc(w.read)+'</span>';
+    h+='<div class="wrow" data-w="'+esc((w.word+w.read+w.cn).toLowerCase())+'">'+
+       '<span class="wword">'+esc(w.word)+'</span>'+read+
+       '<span class="wcn"><span class="t">'+esc(w.cn)+'</span></span></div>';
+  });
+  h+='</div></div></div>';
+
+  // 语法
+  h+='<div class="sec"><div class="sec-h g">核心语法</div><div class="glist">';
+  L.grammar.forEach(g=>{
+    h+='<div class="gitem">'+mdBold(g)+'</div>';
+  });
+  h+='</div></div>';
+
+  return h;
+}
+function cnSpanInner(t){return '<span class="t">'+esc(t)+'</span>';}
+function mdBold(s){
+  // **x** -> <b>x</b>，保留 <br>
+  let e=s.replace(/&/g,'&amp;').replace(/</g,'＜').replace(/>/g,'＞');
+  e=e.replace(/＜br＞/g,'<br>');
+  return e.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>');
+}
+
+function buildTabs(){
+  let h='';
+  DATA.lessons.forEach((L,i)=>{
+    const n=i+1;
+    h+='<div class="tab'+(STAR[n]?' key':'')+(DONE.has(i)?' done':'')+'" data-i="'+i+'">'+n+(STAR[n]?'<span class="star">★</span>':'')+'</div>';
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+
+function markDone(idx){
+  if(DONE.has(idx)) return;
+  DONE.add(idx);
+  try{localStorage.setItem('jp_done',JSON.stringify([...DONE]));}catch(e){}
+}
+
+function show(idx){
+  cur=idx;
+  document.getElementById('main').innerHTML=renderLesson(idx);
+  markDone(idx);
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('on',i===idx);
+    t.classList.toggle('done',DONE.has(i));
+  });
+  const at=document.querySelector('.tab.on');
+  if(at) at.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+  window.scrollTo(0,0);
+}
+
+// 事件
+document.getElementById('tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab'); if(t) show(+t.dataset.i);
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(confirm('确定清空所有「已看」进度标记吗？')){
+    DONE=new Set();
+    try{localStorage.removeItem('jp_done');}catch(e){}
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('done'));
+    markDone(cur);
+    const ct=document.querySelector('.tab[data-i="'+cur+'"]');
+    if(ct) ct.classList.add('done');
+  }
+});
+document.getElementById('tCn').addEventListener('click',function(){
+  document.body.classList.toggle('hidecn');
+  this.classList.toggle('on',document.body.classList.contains('hidecn'));
+});
+document.getElementById('tKana').addEventListener('click',function(){
+  document.body.classList.toggle('hidekana');
+  this.classList.toggle('on',document.body.classList.contains('hidekana'));
+});
+// 点遮罩单独显示
+document.getElementById('main').addEventListener('click',e=>{
+  const k=e.target.closest('.kana,.wread');
+  if(k && document.body.classList.contains('hidekana')){k.classList.toggle('show');return;}
+  const c=e.target.closest('.cn,.trans,.wcn');
+  if(c && document.body.classList.contains('hidecn')){c.classList.toggle('show');}
+});
+// 搜索
+document.getElementById('search').addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase();
+  document.querySelectorAll('.wrow').forEach(r=>{
+    const hit=q && r.dataset.w.includes(q);
+    r.style.background = hit?'#fff6c8':'';
+  });
+  if(q){
+    const first=[...document.querySelectorAll('.wrow')].find(r=>r.dataset.w.includes(q));
+    if(first) first.scrollIntoView({block:'center',behavior:'smooth'});
+  }
+});
+
+buildTabs();
+show(0);
+</script>
 </body>
 </html>
